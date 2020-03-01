@@ -1,27 +1,6 @@
 - import_tasks: iocage.yml
   tags:
     - jailed
-- import_tasks: unbound.yml
-  tags:
-    - unbound
-  when: jail_net_resolver != 'none'
-- import_tasks: pf.yml
-  tags:
-    - jailed
-- name: Reload pf
-  command: |
-    service pf reload
-  tags:
-    - jailed
-  args:
-    warn: False
-  when: jail_created is changed
-- name: Start jail
-  command: |
-    /usr/local/bin/iocage start {{ jail_name }}
-  tags:
-    - jailed
-  when: jail_created is changed
 - import_tasks: net.yml
   tags:
     - jailed
@@ -29,6 +8,9 @@
   tags:
     - jailed
   when:  jail_build_server_enabled | default(false)
+- import_tasks: pf.yml
+  tags:
+    - jailed
 - import_tasks: user.yml
   tags:
     - jailed
@@ -43,3 +25,7 @@
   tags:
     - jailed
   when: use_ssmtp | default(false)
+- import_tasks: unbound.yml
+  tags:
+    - unbound
+  when: jail_net_resolver != 'none'
